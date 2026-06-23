@@ -81,6 +81,7 @@ const kpis = [
   ["Processed Revenue", 420270, "+12.4% vs previous month", "up"],
   ["Total PSP Cost", 8932, "2.13% of revenue", "cost"],
   ["Revenue Leakage", 14450, "3.4% of revenue", "risk"],
+  ["Current PSP Provider", "PayPlus", "active primary PSP", "up"],
   ["Net After Fees & Leakage", 396888, "₪420,270 - ₪8,932 - ₪14,450", "up"],
 ];
 
@@ -514,7 +515,7 @@ function renderDashboard() {
       ${kpis.map(([label, value, detail, tone]) => `
         <article class="kpi-card ${tone}">
           <span>${label}</span>
-          <strong>${money(value)}</strong>
+          <strong>${typeof value === "number" ? money(value) : value}</strong>
           <small>${detail}</small>
         </article>
       `).join("")}
