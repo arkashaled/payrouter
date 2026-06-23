@@ -78,17 +78,6 @@ input {
   color: var(--ink);
 }
 
-.button.glass {
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.28);
-  color: #ffffff;
-}
-
-.button.large {
-  min-height: 48px;
-  padding: 13px 18px;
-}
-
 .button.full {
   width: 100%;
 }
@@ -114,60 +103,6 @@ input {
   width: 36px;
 }
 
-.site-nav {
-  align-items: center;
-  background: rgba(14, 23, 38, 0.82);
-  color: #ffffff;
-  display: flex;
-  justify-content: space-between;
-  left: 0;
-  padding: 18px clamp(18px, 5vw, 64px);
-  position: fixed;
-  right: 0;
-  top: 0;
-  z-index: 20;
-}
-
-.site-nav nav {
-  align-items: center;
-  display: flex;
-  gap: 22px;
-}
-
-.hero {
-  align-items: center;
-  background: var(--navy);
-  color: #ffffff;
-  display: grid;
-  min-height: 88vh;
-  overflow: hidden;
-  padding: 96px clamp(18px, 6vw, 84px) 48px;
-  position: relative;
-}
-
-.hero img {
-  height: 100%;
-  inset: 0;
-  object-fit: cover;
-  object-position: center;
-  position: absolute;
-  width: 100%;
-}
-
-.hero-overlay {
-  background:
-    linear-gradient(90deg, rgba(10, 18, 30, 0.94) 0%, rgba(10, 18, 30, 0.74) 40%, rgba(10, 18, 30, 0.16) 100%),
-    linear-gradient(0deg, rgba(10, 18, 30, 0.5), rgba(10, 18, 30, 0.08));
-  inset: 0;
-  position: absolute;
-}
-
-.hero-copy {
-  max-width: 680px;
-  position: relative;
-  z-index: 1;
-}
-
 .eyebrow {
   color: var(--teal);
   display: block;
@@ -178,10 +113,6 @@ input {
   text-transform: uppercase;
 }
 
-.hero .eyebrow {
-  color: #85eadc;
-}
-
 h1,
 h2,
 h3,
@@ -189,153 +120,11 @@ p {
   margin-top: 0;
 }
 
-.hero h1 {
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 80px;
-  line-height: 0.95;
-  margin-bottom: 18px;
-}
-
-.hero-line {
-  font-size: 28px;
-  font-weight: 850;
-  margin-bottom: 12px;
-}
-
-.hero-copy p:not(.hero-line) {
-  color: #d8e1ef;
-  font-size: 18px;
-  max-width: 650px;
-}
-
-.hero-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 28px;
-}
-
-.landing-main {
-  background: #ffffff;
-}
-
-.proof-strip {
-  background: #ffffff;
-  border-bottom: 1px solid var(--line);
-  display: grid;
-  gap: 1px;
-  grid-template-columns: repeat(4, 1fr);
-}
-
-.proof-strip div {
-  background: #ffffff;
-  padding: 24px clamp(18px, 4vw, 48px);
-}
-
-.proof-strip strong {
-  display: block;
-  font-size: 28px;
-}
-
-.proof-strip span {
-  color: var(--muted);
-}
-
-.section {
-  margin: 0 auto;
-  max-width: 1180px;
-  padding: 80px 22px;
-}
-
-.two-col {
-  display: grid;
-  gap: 48px;
-  grid-template-columns: 0.86fr 1.14fr;
-}
-
-.section h2 {
-  font-size: 38px;
-  line-height: 1.08;
-  margin-bottom: 14px;
-}
-
-.section p {
-  color: var(--muted);
-  font-size: 17px;
-}
-
-.pain-grid,
-.feature-grid,
-.steps {
-  display: grid;
-  gap: 14px;
-}
-
-.pain-grid {
-  grid-template-columns: repeat(2, 1fr);
-}
-
-.mini-card,
-.feature-card,
-.steps article,
 .panel,
 .kpi-card {
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: 8px;
-}
-
-.mini-card {
-  color: #26374d;
-  font-weight: 700;
-  padding: 18px;
-}
-
-.section-heading {
-  max-width: 680px;
-}
-
-.feature-grid {
-  grid-template-columns: repeat(3, 1fr);
-  margin-top: 30px;
-}
-
-.feature-card {
-  padding: 22px;
-}
-
-.feature-card h3,
-.steps h3 {
-  margin-bottom: 8px;
-}
-
-.steps-band {
-  max-width: none;
-  padding-left: max(22px, calc((100vw - 1180px) / 2));
-  padding-right: max(22px, calc((100vw - 1180px) / 2));
-}
-
-.steps {
-  grid-template-columns: repeat(5, 1fr);
-  margin-top: 28px;
-}
-
-.steps article {
-  min-height: 150px;
-  padding: 20px;
-}
-
-.steps span {
-  align-items: center;
-  background: #eaf8f6;
-  border-radius: 8px;
-  color: var(--teal);
-  display: inline-flex;
-  font-weight: 900;
-  height: 34px;
-  justify-content: center;
-  margin-bottom: 18px;
-  width: 34px;
 }
 
 .app-shell {
@@ -1385,32 +1174,6 @@ input {
 }
 
 @media (max-width: 860px) {
-  .site-nav {
-    position: absolute;
-  }
-
-  .site-nav nav a:not(.button) {
-    display: none;
-  }
-
-  .hero {
-    min-height: 92vh;
-    padding-top: 108px;
-  }
-
-  .hero h1 {
-    font-size: 54px;
-  }
-
-  .hero-line {
-    font-size: 24px;
-  }
-
-  .proof-strip,
-  .two-col,
-  .feature-grid,
-  .steps,
-  .pain-grid,
   .table-grid,
   .settings-grid,
   .insight-grid {
@@ -1452,18 +1215,6 @@ input {
 }
 
 @media (max-width: 560px) {
-  .hero {
-    min-height: 94vh;
-  }
-
-  .hero h1 {
-    font-size: 44px;
-  }
-
-  .hero-copy p:not(.hero-line) {
-    font-size: 16px;
-  }
-
   .kpi-grid,
   .exception-summary,
   .setup-health-grid {

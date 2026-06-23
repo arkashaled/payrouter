@@ -504,97 +504,8 @@ function shell(title, body, actions = "", subtitle = "") {
 
 function isActive(path) {
   const current = window.location.pathname === "/" ? "/" : window.location.pathname.replace(/\/$/, "");
+  if (current === "/" && path === "/dashboard") return true;
   return current === path;
-}
-
-function renderLanding() {
-  return `
-    <header class="site-nav">
-      <a class="brand" href="/" data-link><span class="brand-mark">PR</span><span>PayRouter</span></a>
-      <nav>
-        <a href="/dashboard" data-link>Dashboard</a>
-        <a href="/compare" data-link>Compare</a>
-        <a class="button primary" href="/dashboard" data-link>Analyze my payment setup</a>
-      </nav>
-    </header>
-    <section class="hero">
-      <img src="/assets/payrouter-hero.png" alt="PayRouter payment profitability dashboard mockup" />
-      <div class="hero-overlay"></div>
-      <div class="hero-copy">
-        <div class="eyebrow">Payment Profitability for Ecommerce Sellers</div>
-        <h1>PayRouter</h1>
-        <p class="hero-line">Stop overpaying for payments.</p>
-        <p>
-          Compare PSPs by real cost, payment-method coverage, checkout compatibility,
-          failed-payment risk, and settlement visibility. Then get a clear recommendation
-          for your store.
-        </p>
-        <div class="hero-actions">
-          <a class="button primary large" href="/dashboard" data-link>Analyze my payment setup</a>
-          <a class="button glass large" href="/dashboard" data-link>View demo dashboard</a>
-        </div>
-      </div>
-    </section>
-    <main class="landing-main">
-      <section class="proof-strip">
-        <div><strong>16,074</strong><span>messages analyzed</span></div>
-        <div><strong>947</strong><span>payment-relevant signals</span></div>
-        <div><strong>196</strong><span>qualified target profiles</span></div>
-        <div><strong>35.3%</strong><span>showed payment-stack pain</span></div>
-      </section>
-      <section class="section two-col">
-        <div>
-          <span class="eyebrow">Problem</span>
-          <h2>Your payment stack is more expensive than it looks.</h2>
-          <p>
-            Monthly fees, refund fees, installment costs, wallet fees, foreign-card fees,
-            failed transactions, settlement delays, and checkout bugs all eat into margin.
-          </p>
-        </div>
-        <div class="pain-grid">
-          ${[
-            "Hidden fees across PSPs and payment methods.",
-            "Unclear PSP fit for Shopify, WooCommerce, and Wix.",
-            "Failed payments and PSP downtime.",
-            "Order status and settlement mismatches.",
-            "Wallets, PayPal, installments, and Amex are hard to compare.",
-            "Switching PSPs feels risky and developer-heavy.",
-          ].map((item) => `<article class="mini-card">${item}</article>`).join("")}
-        </div>
-      </section>
-      <section class="section">
-        <div class="section-heading">
-          <span class="eyebrow">Product</span>
-          <h2>One control layer for payment profitability.</h2>
-          <p>Not another PSP list. A decision and execution layer for ecommerce payments.</p>
-        </div>
-        <div class="feature-grid">
-          ${[
-            ["Profit Dashboard", "See true payment cost, blended rate, hidden fees, and leakage."],
-            ["PSP Comparison", "Model providers against your store, platform, and method mix."],
-            ["Payment Method Fit", "Know when to enable, limit, or review each payment method."],
-            ["Recommended Setup", "Move from raw data to a specific primary and backup PSP plan."],
-            ["Fallback Readiness", "Understand where failed payments need recovery paths."],
-            ["Reconciliation Visibility", "Spot order, PSP, settlement, refund, and chargeback mismatches."],
-          ].map(([title, copy]) => `<article class="feature-card"><h3>${title}</h3><p>${copy}</p></article>`).join("")}
-        </div>
-      </section>
-      <section class="section steps-band">
-        <div class="section-heading">
-          <span class="eyebrow">Workflow</span>
-          <h2>Data to insight to recommendation to execution.</h2>
-        </div>
-        <div class="steps">
-          ${["Connect or input store data", "See your true payment cost", "Compare providers and methods", "Get a recommended setup", "Execute safely with a checklist"].map((step, index) => `
-            <article>
-              <span>${index + 1}</span>
-              <h3>${step}</h3>
-            </article>
-          `).join("")}
-        </div>
-      </section>
-    </main>
-  `;
 }
 
 function renderDashboard() {
@@ -992,7 +903,7 @@ function route(options = {}) {
     path = "/dashboard";
   }
   const routes = {
-    "/": renderLanding,
+    "/": renderDashboard,
     "/dashboard": renderDashboard,
     "/compare": renderCompare,
     "/psp-setup": renderPspSetup,
