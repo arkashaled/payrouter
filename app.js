@@ -3,9 +3,60 @@ const percent = (value) => `${value.toFixed(2).replace(/\.00$/, "")}%`;
 const money = (value) => `₪${numberFormat.format(value)}`;
 
 const stores = [
-  { name: "My Store", platform: "Shopify" },
-  { name: "Outlet Store", platform: "WooCommerce" },
-  { name: "International Store", platform: "Wix" },
+  {
+    name: "My Store",
+    platform: "Shopify",
+    profile: [
+      ["Platform", "Shopify"],
+      ["Currency", "ILS"],
+      ["Monthly revenue", money(420270)],
+      ["Average order value", money(121)],
+      ["Foreign card usage", "8%"],
+    ],
+    paymentStack: [
+      ["Primary PSP", "PayPlus"],
+      ["Backup PSP", "None configured"],
+      ["Wallets", "Bit, PayPal"],
+      ["Installments", "Enabled"],
+      ["Settlement file", "Manual upload"],
+    ],
+  },
+  {
+    name: "Outlet Store",
+    platform: "WooCommerce",
+    profile: [
+      ["Platform", "WooCommerce"],
+      ["Currency", "ILS"],
+      ["Monthly revenue", money(312640)],
+      ["Average order value", money(156)],
+      ["Foreign card usage", "12%"],
+    ],
+    paymentStack: [
+      ["Primary PSP", "Tranzila"],
+      ["Backup PSP", "PayPlus"],
+      ["Wallets", "PayPal, Apple Pay"],
+      ["Installments", "Enabled"],
+      ["Settlement file", "WooCommerce plugin sync"],
+    ],
+  },
+  {
+    name: "International Store",
+    platform: "Wix",
+    profile: [
+      ["Platform", "Wix"],
+      ["Currency", "ILS"],
+      ["Monthly revenue", money(188900)],
+      ["Average order value", money(94)],
+      ["Foreign card usage", "18%"],
+    ],
+    paymentStack: [
+      ["Primary PSP", "Cardcom"],
+      ["Backup PSP", "None configured"],
+      ["Wallets", "PayPal, Google Pay"],
+      ["Installments", "Disabled"],
+      ["Settlement file", "CSV import"],
+    ],
+  },
 ];
 let selectedStoreIndex = 0;
 
@@ -765,27 +816,16 @@ function renderTransactions() {
 }
 
 function renderSettings() {
+  const selectedStore = stores[selectedStoreIndex] ?? stores[0];
   return shell("Store & Payment Settings", `
     <section class="settings-grid">
       <article class="panel">
         <h2>Store profile</h2>
-        ${metricList([
-          ["Platform", "Shopify"],
-          ["Currency", "ILS"],
-          ["Monthly revenue", money(420270)],
-          ["Average order value", money(121)],
-          ["Foreign card usage", "8%"],
-        ])}
+        ${metricList(selectedStore.profile)}
       </article>
       <article class="panel">
         <h2>Current payment stack</h2>
-        ${metricList([
-          ["Primary PSP", "PayPlus"],
-          ["Backup PSP", "None configured"],
-          ["Wallets", "Bit, PayPal"],
-          ["Installments", "Enabled"],
-          ["Settlement file", "Manual upload"],
-        ])}
+        ${metricList(selectedStore.paymentStack)}
       </article>
     </section>
   `);
