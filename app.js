@@ -29,7 +29,6 @@ const tableState = {
 const kpis = [
   ["Processed Revenue", 420270, "+12.4% vs previous month", "up"],
   ["Total PSP Cost", 8932, "2.13% of revenue", "cost"],
-  ["Hidden Fees", 1247, "included in PSP cost", "warn"],
   ["Revenue Leakage", 14450, "3.4% of revenue", "risk"],
   ["Net After Fees & Leakage", 396888, "₪420,270 - ₪8,932 - ₪14,450", "up"],
 ];
