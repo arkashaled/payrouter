@@ -221,10 +221,8 @@ const pspSetup = {
 const nav = [
   ["Dashboard", "/dashboard"],
   ["PSP Comparison", "/compare"],
-  ["Recommendations", "/recommendation"],
   ["PSP Setup", "/psp-setup"],
   ["Transactions", "/transactions"],
-  ["Reports", "/reports"],
   ["Settings", "/settings"],
 ];
 
@@ -402,7 +400,6 @@ function renderLanding() {
       <nav>
         <a href="/dashboard" data-link>Dashboard</a>
         <a href="/compare" data-link>Compare</a>
-        <a href="/recommendation" data-link>Recommendation</a>
         <a class="button primary" href="/dashboard" data-link>Analyze my payment setup</a>
       </nav>
     </header>
@@ -634,43 +631,6 @@ function renderCompare() {
   `);
 }
 
-function renderRecommendation() {
-  return shell("Recommended Payment Setup", `
-    <section class="recommendation-hero">
-      <div>
-        <span class="eyebrow">Our recommendation</span>
-        <h2>Use Tranzila as primary PSP and PayPlus as backup.</h2>
-        <p>Enable Bit, Apple Pay, and Google Pay. Review PayPal for international orders. Avoid installments below ₪500 basket size.</p>
-      </div>
-      <div class="impact-stack">
-        <strong>${money(1820)}/month</strong>
-        <span>Estimated monthly savings</span>
-      </div>
-    </section>
-    <section class="insight-grid">
-      <article class="panel"><h2>Expected Impact</h2>${metricList([
-        ["Estimated annual savings", money(21840)],
-        ["Failed-payment recovery potential", "₪4,000-₪9,000/month"],
-        ["Current blended rate", "2.13%"],
-        ["Target blended rate", "1.65%-1.82%"],
-      ])}</article>
-      <article class="panel"><h2>Why this setup</h2>${bulletList([
-        "Lower estimated effective cost.",
-        "Better payment-method coverage for the current store mix.",
-        "Backup provider reduces downtime risk.",
-        "Better checkout fit for Shopify and WooCommerce paths.",
-        "Cleaner reconciliation path across orders and settlements.",
-      ])}</article>
-      <article class="panel"><h2>Risks to validate</h2>${bulletList([
-        "Requires PSP contract validation.",
-        "Requires checkout test before launch.",
-        "Requires order-status sync validation.",
-        "Quoted fees may differ from provider paperwork.",
-      ])}</article>
-    </section>
-  `);
-}
-
 function PspStatusCards() {
   return pspSetup.statusCards.map(([label, value, detail, tone]) => `
     <article class="kpi-card ${tone}">
@@ -824,17 +784,6 @@ function renderSettings() {
   `);
 }
 
-function renderOperations(title, copy) {
-  return shell(title, `
-    <section class="panel empty-state">
-      <span class="eyebrow">Mock module</span>
-      <h2>${title}</h2>
-      <p>${copy}</p>
-      <a href="/dashboard" data-link class="button secondary">Back to dashboard</a>
-    </section>
-  `);
-}
-
 function paymentMethodTable() {
   const methodRows = tableRows(
     "paymentMethods",
@@ -918,15 +867,17 @@ function route(options = {}) {
     window.history.replaceState({}, "", "/psp-setup");
     path = "/psp-setup";
   }
+  if (path === "/recommendation" || path === "/reports") {
+    window.history.replaceState({}, "", "/dashboard");
+    path = "/dashboard";
+  }
   const routes = {
     "/": renderLanding,
     "/dashboard": renderDashboard,
     "/compare": renderCompare,
-    "/recommendation": renderRecommendation,
     "/psp-setup": renderPspSetup,
     "/transactions": renderTransactions,
     "/settings": renderSettings,
-    "/reports": () => renderOperations("Reports", "Export monthly profitability reports for finance, ecommerce, and agency review."),
   };
   document.getElementById("app").innerHTML = (routes[path] || renderDashboard)();
   if (options.focusFilter) {
