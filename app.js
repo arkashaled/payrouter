@@ -24,9 +24,6 @@ const tableState = {
   paymentMethods: { query: "", sortKey: "method", sortDir: "asc" },
   providers: { query: "", sortKey: "savings", sortDir: "desc" },
   transactions: { query: "", sortKey: "date", sortDir: "desc" },
-  backupSetup: { query: "", sortKey: "requirement", sortDir: "asc" },
-  pspChecklist: { query: "", sortKey: "step", sortDir: "asc" },
-  failoverTests: { query: "", sortKey: "test", sortDir: "asc" },
 };
 
 const kpis = [
@@ -222,32 +219,6 @@ const pspSetup = {
       "Cleaner PSP status and settlement checks",
     ],
   },
-  backupSetup: [
-    { requirement: "Backup PSP selected", status: "PayPlus", action: "Confirm" },
-    { requirement: "Backup PSP credentials connected", status: "Missing", action: "Connect credentials" },
-    { requirement: "Backup route enabled", status: "Not configured", action: "Enable fallback" },
-    { requirement: "Test backup transaction", status: "Pending", action: "Run test" },
-    { requirement: "Test failed-payment retry", status: "Pending", action: "Run test" },
-    { requirement: "Confirm order status sync", status: "Pending", action: "Validate" },
-    { requirement: "Confirm settlement matching", status: "Pending", action: "Validate" },
-  ],
-  switchingChecklist: [
-    { step: "Connect Tranzila account", owner: "Merchant", status: "Not started" },
-    { step: "Validate Shopify PSP plugin", owner: "PayRouter", status: "Pending" },
-    { step: "Run live test transaction", owner: "Merchant", status: "Pending" },
-    { step: "Switch primary PSP to Tranzila", owner: "Merchant", status: "Blocked until tests pass" },
-    { step: "Keep PayPlus as backup PSP", owner: "PayRouter", status: "Pending" },
-    { step: "Run fallback test", owner: "PayRouter", status: "Pending" },
-    { step: "Validate order status sync", owner: "PayRouter", status: "Pending" },
-    { step: "Validate settlement file import", owner: "Merchant", status: "Pending" },
-  ],
-  failoverTests: [
-    { test: "Primary PSP timeout", result: "Not run", notes: "Connect a backup PSP first" },
-    { test: "Retryable card decline", result: "Not run", notes: "Backup route not enabled" },
-    { test: "Hard decline", result: "Skipped", notes: "Should not be retried" },
-    { test: "Order status sync", result: "Pending", notes: "Needs validation" },
-    { test: "Settlement match", result: "Pending", notes: "Needs validation" },
-  ],
 };
 
 const nav = [
@@ -701,23 +672,6 @@ function renderRecommendation() {
   `);
 }
 
-function setupStatusRank(value) {
-  const ranks = {
-    Missing: 1,
-    "Not configured": 2,
-    "Blocked until tests pass": 3,
-    "Not started": 4,
-    Pending: 5,
-    "Not run": 6,
-    Failed: 7,
-    Skipped: 8,
-    PayPlus: 9,
-    Ready: 10,
-    Done: 11,
-  };
-  return ranks[value] ?? 99;
-}
-
 function PspStatusCards() {
   return pspSetup.statusCards.map(([label, value, detail, tone]) => `
     <article class="kpi-card ${tone}">
@@ -757,151 +711,9 @@ function RecommendedPspSetupCard() {
         ${setup.reasons.map((reason) => `<span>${reason}</span>`).join("")}
       </div>
       <div class="setup-actions">
-        <a class="button primary" href="#backup-psp-setup">Start PSP Setup</a>
         <a class="button secondary" href="/compare" data-link>View PSP Comparison</a>
       </div>
     </article>
-  `;
-}
-
-function BackupPspSetupTable() {
-  const rows = tableRows(
-    "backupSetup",
-    pspSetup.backupSetup,
-    (row) => [row.requirement, row.status, row.action],
-    (row, key) => key === "status" ? setupStatusRank(row.status) : row[key],
-  );
-  return `
-    <article class="panel wide" id="backup-psp-setup">
-      <div class="panel-head stacked">
-        <div>
-          <h2>Backup PSP Setup</h2>
-          <p>These are the exact requirements before PayPlus can safely act as backup PSP.</p>
-        </div>
-        <span>Core execution</span>
-      </div>
-      ${tableTools("backupSetup", "Filter backup requirements, status, or action", rows.length, pspSetup.backupSetup.length)}
-      <div class="table-scroll">
-        <table class="setup-table">
-          <thead>
-            <tr>
-              ${[
-                ["requirement", "Requirement"],
-                ["status", "Status"],
-                ["action", "Action"],
-              ].map(([key, label]) => sortHeader("backupSetup", key, label)).join("")}
-            </tr>
-          </thead>
-          <tbody>
-            ${rows.length ? rows.map((row) => `
-              <tr>
-                <td><strong>${row.requirement}</strong></td>
-                <td>${pill(row.status)}</td>
-                <td>${row.action}</td>
-              </tr>
-            `).join("") : emptyTableRow(3)}
-          </tbody>
-        </table>
-      </div>
-    </article>
-  `;
-}
-
-function PspSwitchingChecklist() {
-  const rows = tableRows(
-    "pspChecklist",
-    pspSetup.switchingChecklist,
-    (row) => [row.step, row.owner, row.status],
-    (row, key) => key === "status" ? setupStatusRank(row.status) : row[key],
-  );
-  return `
-    <article class="panel wide">
-      <div class="panel-head stacked">
-        <div>
-          <h2>PSP Switching Checklist</h2>
-          <p>Keep the migration focused on PSP setup, tests, and safe primary/backup activation.</p>
-        </div>
-        <span>Safe migration checklist</span>
-      </div>
-      ${tableTools("pspChecklist", "Filter switching steps, owner, or status", rows.length, pspSetup.switchingChecklist.length)}
-      <div class="table-scroll">
-        <table class="setup-table">
-          <thead>
-            <tr>
-              ${[
-                ["step", "Step"],
-                ["owner", "Owner"],
-                ["status", "Status"],
-              ].map(([key, label]) => sortHeader("pspChecklist", key, label)).join("")}
-            </tr>
-          </thead>
-          <tbody>
-            ${rows.length ? rows.map((row) => `
-              <tr>
-                <td><strong>${row.step}</strong></td>
-                <td>${row.owner}</td>
-                <td>${pill(row.status)}</td>
-              </tr>
-            `).join("") : emptyTableRow(3)}
-          </tbody>
-        </table>
-      </div>
-    </article>
-  `;
-}
-
-function FailoverTestResults() {
-  const rows = tableRows(
-    "failoverTests",
-    pspSetup.failoverTests,
-    (row) => [row.test, row.result, row.notes],
-    (row, key) => key === "result" ? setupStatusRank(row.result) : row[key],
-  );
-  return `
-    <article class="panel wide">
-      <div class="panel-head stacked">
-        <div>
-          <h2>Failover Test Results</h2>
-          <p>No failover tests have passed yet. Connect a backup PSP to test fallback routing.</p>
-        </div>
-        <span>Before setup</span>
-      </div>
-      ${tableTools("failoverTests", "Filter failover tests, result, or notes", rows.length, pspSetup.failoverTests.length)}
-      <div class="table-scroll">
-        <table class="setup-table">
-          <thead>
-            <tr>
-              ${[
-                ["test", "Test"],
-                ["result", "Result"],
-                ["notes", "Notes"],
-              ].map(([key, label]) => sortHeader("failoverTests", key, label)).join("")}
-            </tr>
-          </thead>
-          <tbody>
-            ${rows.length ? rows.map((row) => `
-              <tr>
-                <td><strong>${row.test}</strong></td>
-                <td>${pill(row.result)}</td>
-                <td>${row.notes}</td>
-              </tr>
-            `).join("") : emptyTableRow(3)}
-          </tbody>
-        </table>
-      </div>
-    </article>
-  `;
-}
-
-function PspSetupCTA() {
-  return `
-    <section class="setup-impact-footer psp-setup-footer">
-      <div>
-        <span class="eyebrow">Ready to configure backup PSP?</span>
-        <h2>Set up PayPlus as backup PSP before switching Tranzila to primary.</h2>
-      </div>
-      <a class="button primary large" href="#backup-psp-setup">Start Backup PSP Setup</a>
-    </section>
   `;
 }
 
@@ -916,10 +728,6 @@ function renderPspSetup() {
         ${CurrentPspSetupCard()}
         ${RecommendedPspSetupCard()}
       </section>
-      ${BackupPspSetupTable()}
-      ${PspSwitchingChecklist()}
-      ${FailoverTestResults()}
-      ${PspSetupCTA()}
     `,
     "",
     "Configure your primary PSP, backup PSP, and failover readiness.",
