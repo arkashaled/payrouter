@@ -792,6 +792,7 @@ function RecommendedPspSetupCard() {
         ${setup.reasons.map((reason) => `<span>${reason}</span>`).join("")}
       </div>
       <div class="setup-actions">
+        <button class="button primary" type="button" data-execute-plan>Execute Plan</button>
         <a class="button secondary" href="/compare" data-link>View PSP Comparison</a>
       </div>
     </article>
@@ -1070,6 +1071,12 @@ document.addEventListener("click", (event) => {
     const action = pspAction.dataset.pspAction;
     const label = pspAction.dataset.pspLabel;
     window.alert(`${action === "create" ? "Create" : "Edit"} ${label} flow coming soon.`);
+    return;
+  }
+
+  const executePlan = event.target.closest("[data-execute-plan]");
+  if (executePlan) {
+    window.alert("Execution plan flow coming soon.");
     return;
   }
 
