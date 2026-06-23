@@ -317,6 +317,7 @@ function emptyTableRow(colspan) {
 function shell(title, body, actions = "", subtitle = "") {
   const selectedStore = stores[selectedStoreIndex];
   const selectedRange = selectedDateRange();
+  const showOnboardPsp = window.location.pathname.replace(/\/$/, "") === "/psp-setup";
   return `
     <div class="app-shell">
       <aside class="sidebar">
@@ -334,6 +335,7 @@ function shell(title, body, actions = "", subtitle = "") {
             ${subtitle ? `<p class="topbar-subtitle">${subtitle}</p>` : ""}
           </div>
           <div class="top-actions">
+            ${showOnboardPsp ? `<button class="button primary" type="button" data-onboard-psp>Onboard PSP</button>` : ""}
             <div class="time-picker">
               <button class="icon-button time-toggle" type="button" data-time-toggle aria-expanded="false">
                 ${selectedRange.label}
@@ -984,6 +986,12 @@ document.addEventListener("click", (event) => {
   const addStore = event.target.closest("[data-add-store]");
   if (addStore) {
     window.alert("Add new store flow coming soon.");
+    return;
+  }
+
+  const onboardPsp = event.target.closest("[data-onboard-psp]");
+  if (onboardPsp) {
+    window.alert("PSP onboarding flow coming soon.");
     return;
   }
 
