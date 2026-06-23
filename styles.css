@@ -732,12 +732,12 @@ table {
   color: #ffffff;
   font-size: 12px;
   font-weight: 800;
-  left: 50%;
+  left: 0;
   opacity: 0;
   padding: 7px 10px;
   pointer-events: none;
   position: absolute;
-  transform: translateX(-50%) translateY(4px);
+  transform: translateY(4px);
   transition: opacity 0.15s ease, transform 0.15s ease;
   white-space: nowrap;
   z-index: 5;
@@ -746,7 +746,7 @@ table {
 .verified-badge:hover [role="tooltip"],
 .verified-badge:focus [role="tooltip"] {
   opacity: 1;
-  transform: translateX(-50%) translateY(0);
+  transform: translateY(0);
 }
 
 .transactions-table {
