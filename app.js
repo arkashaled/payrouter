@@ -194,8 +194,6 @@ const pspSetup = {
   statusCards: [
     ["Primary PSP", "PayPlus", "Active", "up"],
     ["Backup PSP", "Not configured", "High risk", "risk"],
-    ["Failover status", "Not ready", "Cards have no backup route", "risk"],
-    ["Setup steps left", "4", "Before backup PSP can go live", "warn"],
   ],
   current: [
     ["Current primary PSP", "PayPlus"],
