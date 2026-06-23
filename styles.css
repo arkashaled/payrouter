@@ -701,6 +701,54 @@ table {
   min-width: 1540px;
 }
 
+.provider-name {
+  align-items: center;
+  display: inline-flex;
+  gap: 8px;
+}
+
+.verified-badge {
+  align-items: center;
+  background: var(--green);
+  border-radius: 999px;
+  color: #ffffff;
+  cursor: help;
+  display: inline-flex;
+  flex: 0 0 auto;
+  font-size: 11px;
+  font-weight: 900;
+  height: 18px;
+  justify-content: center;
+  line-height: 1;
+  position: relative;
+  width: 18px;
+}
+
+.verified-badge [role="tooltip"] {
+  background: var(--navy);
+  border-radius: 8px;
+  bottom: calc(100% + 8px);
+  box-shadow: 0 10px 24px rgba(16, 26, 42, 0.18);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 800;
+  left: 50%;
+  opacity: 0;
+  padding: 7px 10px;
+  pointer-events: none;
+  position: absolute;
+  transform: translateX(-50%) translateY(4px);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  white-space: nowrap;
+  z-index: 5;
+}
+
+.verified-badge:hover [role="tooltip"],
+.verified-badge:focus [role="tooltip"] {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
 .transactions-table {
   min-width: 1120px;
 }

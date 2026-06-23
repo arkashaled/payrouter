@@ -632,7 +632,12 @@ function renderCompare() {
           <tbody>
             ${providerRows.length ? providerRows.map((p) => `
               <tr>
-                <td><strong>${p.name}</strong></td>
+                <td>
+                  <span class="provider-name">
+                    ${p.name === "Tranzila" ? `<span class="verified-badge" tabindex="0" aria-label="most reccomended option">✓<span role="tooltip">most reccomended option</span></span>` : ""}
+                    <strong>${p.name}</strong>
+                  </span>
+                </td>
                 <td>${money(p.monthlyCost)}</td>
                 <td>${percent(p.effectiveRate)}</td>
                 <td class="good-text">${money(p.savings)}</td>
