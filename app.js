@@ -603,7 +603,7 @@ function renderCompare() {
   );
   return shell("PSP Comparison", `
     <article class="panel wide">
-      <div class="panel-head"><h2>Provider Comparison</h2><span>Monthly estimate from mock data</span></div>
+      <div class="panel-head"><h2>Provider Comparison</h2></div>
       ${tableTools("providers", "Filter providers, methods, fit, or role", providerRows.length, psps.length)}
       <div class="table-scroll">
         <table class="provider-table">
