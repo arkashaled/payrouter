@@ -112,9 +112,9 @@ const paymentMethods = [
 const psps = [
   {
     name: "PayPlus",
-    monthlyCost: 7890,
+    monthlyCost: 8932,
     effectiveRate: 1.88,
-    savings: 1042,
+    savings: 0,
     methods: ["Cards", "Bit", "Apple Pay", "Installments"],
     reliability: "Good",
     score: 6.2,
