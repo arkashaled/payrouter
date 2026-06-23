@@ -74,7 +74,7 @@ let activeCustomDateRange = null;
 const tableState = {
   paymentMethods: { query: "", sortKey: "method", sortDir: "asc" },
   providers: { query: "", sortKey: "savings", sortDir: "desc" },
-  transactions: { query: "", sortKey: "date", sortDir: "desc" },
+  transactions: { query: "", sortKey: "date", sortDir: "desc", page: 1, pageSize: 10 },
 };
 
 const kpis = [
@@ -231,13 +231,45 @@ const psps = [
   },
 ];
 
-const transactions = [
+const seedTransactions = [
   ["#10482", "May 31", "Demo Customer A", "Credit Card", "PayPlus", 640, "Paid", "Failed", "Missing", "Order marked paid but PSP failed", "Void order status and retry via backup PSP"],
   ["#10477", "May 30", "Demo Customer B", "PayPal", "PayPal", 1280, "Paid", "Approved", "Pending", "PSP approved but settlement missing", "Check settlement file and provider batch"],
   ["#10451", "May 27", "Demo Customer C", "Bit", "Tranzila", 220, "Refunded", "Approved", "Pending", "Refund pending", "Reconcile refund against bank payout"],
   ["#10444", "May 25", "Demo Customer D", "Cards", "Cardcom", 1890, "Paid", "Approved", "Held", "Chargeback opened", "Collect proof of delivery"],
   ["#10418", "May 22", "Demo Customer E", "Installments", "PayPlus", 760, "Failed", "Declined", "None", "Payment failed but fallback not configured", "Enable backup route for card declines"],
   ["#10398", "May 19", "Demo Customer F", "PayPal", "PayPal", 540, "Paid", "Approved", "Settled", "High-cost method used", "Limit PayPal to international orders"],
+];
+
+const transactionTemplates = [
+  ["Credit Card", "PayPlus", "Paid", "Approved", "Settled", "Approved card transaction"],
+  ["Bit", "Tranzila", "Paid", "Approved", "Settled", "Wallet payment settled"],
+  ["PayPal", "PayPal", "Paid", "Approved", "Pending", "Settlement pending"],
+  ["Cards", "Cardcom", "Paid", "Failed", "Missing", "Order marked paid but PSP failed"],
+  ["Installments", "PayPlus", "Failed", "Declined", "None", "Payment failed"],
+  ["Apple Pay", "Tranzila", "Paid", "Approved", "Settled", "Wallet payment settled"],
+  ["Google Pay", "Grow", "Paid", "Approved", "Pending", "Settlement pending"],
+  ["Credit Card", "Meshulam", "Refunded", "Approved", "Pending", "Refund pending"],
+  ["Amex", "PayPlus", "Paid", "Approved", "Held", "Chargeback opened"],
+  ["PayPal", "PayPal", "Paid", "Approved", "Settled", "High-cost method used"],
+];
+
+const extraTransactionCount = 94;
+const targetTransactionRevenue = 420270;
+const seedTransactionRevenue = seedTransactions.reduce((sum, row) => sum + row[5], 0);
+const generatedTransactionRevenue = targetTransactionRevenue - seedTransactionRevenue;
+const generatedBaseAmount = Math.floor(generatedTransactionRevenue / extraTransactionCount);
+const generatedRemainder = generatedTransactionRevenue - generatedBaseAmount * extraTransactionCount;
+
+const transactions = [
+  ...seedTransactions,
+  ...Array.from({ length: extraTransactionCount }, (_, index) => {
+    const [method, psp, storeStatus, pspStatus, settlement, issueType] = transactionTemplates[index % transactionTemplates.length];
+    const amount = generatedBaseAmount + (index < generatedRemainder ? 1 : 0);
+    const orderId = `#${10397 - index}`;
+    const date = `May ${18 - (index % 18)}`;
+    const customer = `Demo Customer ${String(index + 7).padStart(3, "0")}`;
+    return [orderId, date, customer, method, psp, amount, storeStatus, pspStatus, settlement, issueType, ""];
+  }),
 ];
 
 const pspSetup = {
@@ -341,6 +373,38 @@ function tableTools(tableId, placeholder, shown, total) {
       </label>
       <span>${shown} of ${total} rows</span>
     </div>
+  `;
+}
+
+function paginateRows(tableId, rows) {
+  const state = tableState[tableId];
+  const pageSize = state.pageSize ?? rows.length;
+  const pageCount = Math.max(1, Math.ceil(rows.length / pageSize));
+  const currentPage = Math.min(Math.max(state.page ?? 1, 1), pageCount);
+  state.page = currentPage;
+  const startIndex = (currentPage - 1) * pageSize;
+  return {
+    rows: rows.slice(startIndex, startIndex + pageSize),
+    pageCount,
+    currentPage,
+    startRow: rows.length ? startIndex + 1 : 0,
+    endRow: Math.min(startIndex + pageSize, rows.length),
+  };
+}
+
+function paginationControls(tableId, currentPage, pageCount) {
+  if (pageCount <= 1) return "";
+  const pages = Array.from({ length: pageCount }, (_, index) => index + 1);
+  return `
+    <nav class="pagination" aria-label="Transactions pagination">
+      <button type="button" data-page-table="${tableId}" data-page-value="${currentPage - 1}" ${currentPage === 1 ? "disabled" : ""}>Previous</button>
+      <div class="pagination-pages">
+        ${pages.map((page) => `
+          <button class="${page === currentPage ? "active" : ""}" type="button" data-page-table="${tableId}" data-page-value="${page}" aria-label="Page ${page}" ${page === currentPage ? "aria-current=\"page\"" : ""}>${page}</button>
+        `).join("")}
+      </div>
+      <button type="button" data-page-table="${tableId}" data-page-value="${currentPage + 1}" ${currentPage === pageCount ? "disabled" : ""}>Next</button>
+    </nav>
   `;
 }
 
@@ -772,18 +836,26 @@ function renderTransactions() {
       return values[key];
     },
   );
+  const pagedTransactions = paginateRows("transactions", transactionRows);
+  const totalRevenue = transactions.reduce((sum, row) => sum + row[5], 0);
+  const paidOrders = transactions.filter((row) => row[6] === "Paid").length;
+  const failedOrders = transactions.filter((row) => row[6] === "Failed" || ["Failed", "Declined"].includes(row[7])).length;
+  const rowRange = transactionRows.length ? `${pagedTransactions.startRow}-${pagedTransactions.endRow}` : "0";
+  const totalRowsLabel = transactionRows.length === transactions.length
+    ? transactions.length
+    : `${transactionRows.length} filtered from ${transactions.length}`;
   return shell("Transaction Exceptions", `
     <section class="exception-summary">
       ${[
-        ["Overall Revenue", money(420270), "matches dashboard revenue"],
-        ["Overall Orders", "6", "mock transactions"],
-        ["Orders Paid", "4", "approved or settled"],
-        ["Orders Failed", "2", "failed or declined"],
+        ["Overall Revenue", money(totalRevenue), "matches dashboard revenue"],
+        ["Overall Orders", String(transactions.length), "mock transactions"],
+        ["Orders Paid", String(paidOrders), "approved or settled"],
+        ["Orders Failed", String(failedOrders), "failed or declined"],
       ].map(([label, value, detail]) => `<article class="kpi-card"><span>${label}</span><strong>${value}</strong><small>${detail}</small></article>`).join("")}
     </section>
     <article class="panel wide">
       <div class="panel-head"><h2>Transactions</h2><span>Mock transaction exceptions</span></div>
-      ${tableTools("transactions", "Filter orders, PSPs, statuses, or issues", transactionRows.length, transactions.length)}
+      ${tableTools("transactions", "Filter orders, PSPs, statuses, or issues", rowRange, totalRowsLabel)}
       <div class="table-scroll">
         <table class="transactions-table">
           <thead>
@@ -803,7 +875,7 @@ function renderTransactions() {
             </tr>
           </thead>
           <tbody>
-            ${transactionRows.length ? transactionRows.map((row) => `
+            ${pagedTransactions.rows.length ? pagedTransactions.rows.map((row) => `
               <tr>
                 ${row.slice(0, 10).map((cell, index) => `<td>${index === 5 ? money(cell) : cell}</td>`).join("")}
               </tr>
@@ -811,6 +883,7 @@ function renderTransactions() {
           </tbody>
         </table>
       </div>
+      ${paginationControls("transactions", pagedTransactions.currentPage, pagedTransactions.pageCount)}
     </article>
   `);
 }
@@ -1000,6 +1073,14 @@ document.addEventListener("click", (event) => {
     return;
   }
 
+  const pageButton = event.target.closest("[data-page-table]");
+  if (pageButton && !pageButton.disabled) {
+    const tableId = pageButton.dataset.pageTable;
+    tableState[tableId].page = Number(pageButton.dataset.pageValue);
+    route({ preserveScroll: true });
+    return;
+  }
+
   const sortButton = event.target.closest("[data-sort-table]");
   if (sortButton) {
     const tableId = sortButton.dataset.sortTable;
@@ -1011,6 +1092,7 @@ document.addEventListener("click", (event) => {
       state.sortKey = sortKey;
       state.sortDir = "asc";
     }
+    if ("page" in state) state.page = 1;
     route({ preserveScroll: true });
     return;
   }
@@ -1045,6 +1127,7 @@ document.addEventListener("input", (event) => {
   if (!filterInput) return;
   const tableId = filterInput.dataset.tableFilter;
   tableState[tableId].query = filterInput.value;
+  if ("page" in tableState[tableId]) tableState[tableId].page = 1;
   route({ preserveScroll: true, focusFilter: tableId });
 });
 

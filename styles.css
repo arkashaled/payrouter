@@ -760,6 +760,48 @@ p {
   font-weight: 750;
 }
 
+.pagination {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.pagination-pages {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.pagination button {
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 800;
+  min-height: 34px;
+  min-width: 34px;
+  padding: 7px 10px;
+}
+
+.pagination button.active,
+.pagination button:hover:not(:disabled) {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #ffffff;
+}
+
+.pagination button:disabled {
+  background: var(--soft);
+  color: var(--muted);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 .donut-wrap {
   align-items: center;
   display: grid;
