@@ -304,7 +304,6 @@ const pspSetup = {
 const nav = [
   ["Dashboard", "/dashboard"],
   ["PSP Comparison", "/compare"],
-  ["PSP Setup", "/psp-setup"],
   ["Transactions", "/transactions"],
   ["Settings", "/settings"],
 ];
