@@ -600,6 +600,38 @@ p {
   position: relative;
 }
 
+.psp-card-actions {
+  display: flex;
+  gap: 8px;
+  position: absolute;
+  right: 18px;
+  top: 18px;
+}
+
+.mini-action {
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--ink);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 800;
+  min-height: 30px;
+  padding: 5px 12px;
+}
+
+.mini-action:hover:not(:disabled) {
+  border-color: var(--primary);
+  color: var(--primary-dark);
+}
+
+.mini-action:disabled {
+  background: var(--soft);
+  color: var(--muted);
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
 .kpi-card::before {
   background: var(--primary);
   content: "";

@@ -632,13 +632,20 @@ function renderCompare() {
 }
 
 function PspStatusCards() {
-  return pspSetup.statusCards.map(([label, value, detail, tone]) => `
+  return pspSetup.statusCards.map(([label, value, detail, tone]) => {
+    const isConfigured = value !== "Not configured";
+    return `
     <article class="kpi-card ${tone}">
+      <div class="psp-card-actions" aria-label="${label} actions">
+        <button class="mini-action" type="button" data-psp-action="create" data-psp-label="${label}">Create</button>
+        <button class="mini-action" type="button" data-psp-action="edit" data-psp-label="${label}" ${isConfigured ? "" : "disabled"}>Edit</button>
+      </div>
       <span>${label}</span>
       <strong>${value}</strong>
       <small>${detail}</small>
     </article>
-  `).join("");
+  `;
+  }).join("");
 }
 
 function CurrentPspSetupCard() {
@@ -942,6 +949,14 @@ document.addEventListener("click", (event) => {
   const onboardPsp = event.target.closest("[data-onboard-psp]");
   if (onboardPsp) {
     window.alert("PSP onboarding flow coming soon.");
+    return;
+  }
+
+  const pspAction = event.target.closest("[data-psp-action]");
+  if (pspAction && !pspAction.disabled) {
+    const action = pspAction.dataset.pspAction;
+    const label = pspAction.dataset.pspLabel;
+    window.alert(`${action === "create" ? "Create" : "Edit"} ${label} flow coming soon.`);
     return;
   }
 
